@@ -5,5 +5,3 @@
 .sqlite
 
 .db
-
-knex.local.js
