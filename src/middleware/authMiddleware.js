@@ -1,0 +1,25 @@
+const jwt = require('jsonwebtoken');
+
+module.exports = function(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader) {
+    return res.status(401).json({ erro: 'Token não fornecido.' });
+  }
+
+  const parts = authHeader.split(' ');
+  if (parts.length !== 2) {
+    return res.status(401).json({ erro: 'Token mal formatado.' });
+  }
+
+  const token = parts[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // vamos armazenar o id do usuário no req
+    req.usuarioId = decoded.id;
+    next();
+  } catch (err) {
+    return res.status(401).json({ erro: 'Token inválido ou expirado.' });
+  }
+};
